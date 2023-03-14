@@ -13,8 +13,8 @@ interpretaciones['embeddings']=interpretaciones.embeddings.apply(
     lambda s: list(ast.literal_eval(s)))
 
 st.title('ClimaCiencia')
-st.caption('Observatorio del Conocimiento Científico sobre Cambio Climático')
-st.caption('Instituto Geofísico del Perú')
+st.caption('Observatorio del Conocimiento Científico sobre Cambio Climático O4C, Instituto Geofísico del Perú')
+#st.caption('Instituto Geofísico del Perú')
 
 st.header('Reporte de interpretaciones con IA')
 st.write('Ingrese abajo su consulta para buscar entre las interpretaciones disponibles en el Observatorio del Conocimiento Científico sobre Cambio Climático O4C y generar un reporte automatizado con inteligencia artificial.')
