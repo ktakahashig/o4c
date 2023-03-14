@@ -23,7 +23,7 @@ st.write('Presione Enter al finalizar y espere mientras se genera el reporte.')
 if query != '':
     with st.spinner('Trabajando ...'):
         report=o4c.search_n_summarize(interpretaciones,query)
-    st.success("Reporte basado en interpretaciones más relevantes a: "+query+"\n\n")
+    st.success("Reporte generado con IA basado en interpretaciones más relevantes a: "+query+"\n\n")
     st.write(report)
 
 
