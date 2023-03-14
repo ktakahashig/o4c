@@ -17,7 +17,7 @@ st.title('ClimaCiencia')
 st.header('Reporte de interpretaciones')
 st.write('Ingrese abajo su consulta para buscar entre las interpretaciones disponibles en el Observatorio del Conocimiento Científico sobre Cambio Climático O4C y generar un reporte automatizado con inteligencia artificial.')
 
-query = st.text_input("Busque en el O4C:" )
+query = st.text_input("\bf{Busque en el O4C:}" )
 st.write('Presione Enter al finalizar y espere mientras se genera el reporte.')
 
 if query != '':
