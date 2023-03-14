@@ -27,5 +27,6 @@ if query != '':
     st.write(report)
 
 
-st.caption('Ken Takahashi, 2023')
+st.caption('Autor: Ken Takahashi, 2023')
+st.caption('Observatorio del Conocimiento Científico sobre Cambio Climático')
 st.caption('Instituto Geofísico del Perú')
