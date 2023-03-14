@@ -21,7 +21,7 @@ def leer_interpretaciones(archivo="Interpretaciones O4C (Respuestas) - Respuesta
     interpretaciones['Adaptación'] = interpretaciones['Adaptación'].str.replace(r'\([^)]*\)', '')
     interpretaciones['Mitigación'] = interpretaciones['Mitigación'].str.replace(r'\([^)]*\)', '')
     #
-    # Clean up a little
+    # Limpiar la base de datos
     interpretaciones['Apellidos, Nombres'] = interpretaciones['Apellidos, Nombres'].replace(
         'Silva Vidal, Yamina','Silva Vidal, Fey Yamina')
     interpretaciones['Apellidos, Nombres'] = interpretaciones['Apellidos, Nombres'].replace(
@@ -81,6 +81,7 @@ def do_search(interpretaciones,query,min_similarity,max_results):
     results = results[results.similarity>=min_similarity][:max_results]
     return results
 
+# Hacer el reporte basado en las interpretaciones más cercanas a la consulta
 def do_summary(results,query):
     import openai
     # Preparar lista de Referencias :: Resultados y conclusiones para el prompt
@@ -94,7 +95,7 @@ def do_summary(results,query):
     bibliografia = ''
     for index, row in dum.iterrows():
         bibliografia += row[0].strip()+': https://doi.org/'+row[1].strip()+ " (intérp.: " \
-                     + row[2].strip()+'; sim. = '+"{:4.2f}".format(row[3]).strip()+')\n'   
+                     + row[2].strip()+'; sim. = '+"{:4.2f}".format(row[3]).strip()+')\n\n'   
     message_sys = """
         Eres un científico experto en el clima y estás apoyando a autoridades en el Perú para 
         elaborar los planes de gestión del cambio climático.
@@ -125,7 +126,7 @@ def do_summary(results,query):
     response = openai.ChatCompletion.create(model='gpt-3.5-turbo', messages=messages, max_tokens=1800, 
                                             n=1, stop=None, temperature=0.2)
     report = response['choices'][0]['message']['content'].strip()
-    report = report+"\n\nReferencias:\n"+bibliografia
+    report = report+"\n\nReferencias:\n\n"+bibliografia
     return report
 
 def search_n_summarize(interpretaciones,query,min_similarity = 0.7,max_results = 10):
