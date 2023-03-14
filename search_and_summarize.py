@@ -19,5 +19,6 @@ query = st.text_input("Busque en el O4C:" )
 with st.spinner('Pensando ...'):
    report=o4c.search_n_summarize(interpretaciones,query)
 
-st.success("Reporte basado en interpretaciones más relevantes a: ",query,"\n\n")
+st.success("Reporte basado en interpretaciones más relevantes a: "+query+"\n\n")
+
 st.write(report)
