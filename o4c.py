@@ -54,9 +54,9 @@ def leer_interpretaciones(archivo="Interpretaciones O4C (Respuestas) - Respuesta
     titulo = interpretaciones["DOI"][i]
     interpretaciones["Título"][i]=titulo
     interpretaciones["DOI"][i]=doi
-    interpretes = pd.read_csv("interpretes.csv")
-    interpretaciones = interpretaciones.join(interpretes.set_index('Apellidos, Nombres'), 
-                                             on='Apellidos, Nombres')
+    #interpretes = pd.read_csv("interpretes.csv")
+    #interpretaciones = interpretaciones.join(interpretes.set_index('Apellidos, Nombres'), 
+    #                                         on='Apellidos, Nombres')
     return interpretaciones
 
 # Para búsqueda semántica
