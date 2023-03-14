@@ -26,7 +26,14 @@ if query != '':
     with st.spinner('Espere mientras la IA genera el reporte ...'):
         report=o4c.search_n_summarize(interpretaciones,query)
     st.success("Reporte generado con IA basado en interpretaciones más relevantes a: "+query+"\n\n")
-    st.write(report)
+    p = st.empty()
+    words = report.split()
+    text = ""
+    for word in words:
+       text= text + word + " "
+       p.write(text)
+       time.sleep(0.05)
+       #st.write(report)
 
 
 st.caption('Autor: Ken Takahashi, \n 2023')
