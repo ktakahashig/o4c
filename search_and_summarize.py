@@ -5,6 +5,7 @@ import openai
 import o4c
 import ast
 import time
+import re
 
 openai.api_key  = st.secrets["OPENAI_API_KEY"]
 
