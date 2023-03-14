@@ -28,7 +28,10 @@ if query != '':
         report=o4c.search_n_summarize(interpretaciones,query)
     st.success("Reporte generado con IA basado en interpretaciones más relevantes a: "+query+"\n\n")
     p = st.empty()
-    words = report.split()
+    # Split the paragraph into sentences using the newline character as a delimiter
+    sentences = report.split("\n")
+    # Split each sentence into words using regular expressions
+    words = [re.findall(r'\w+|[^\w\s]', sentence) for sentence in sentences]
     text = ""
     for word in words:
        text= text + word + " "
