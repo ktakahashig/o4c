@@ -29,39 +29,25 @@ if query != '':
         report=o4c.search_n_summarize(interpretaciones,query)
     st.success("Reporte generado con IA basado en interpretaciones más relevantes a: "+query+"\n\n")
     p = st.empty()
-    # Split the paragraph into sentences using the newline character as a delimiter
-    sentences = report.split("\n")
-    # Split each sentence into words using regular expressions
-    words = [re.findall(r'\w+|[^\w\s]', sentence) for sentence in sentences]
+    paragraphs = report.split("\n\n")  # Split text into paragraphs
     text = ""
-    for sentence in words:
-        for word in sentence:
-            text= text + word + " "
+    for paragraph in paragraphs:
+        words = []
+        current_word = ""
+        for character in paragraph:
+            if character.isalnum() or character == "'":  # Preserve alphanumeric characters and apostrophes
+                current_word += character
+            else:
+                if current_word:
+                    words.append(current_word)
+                    current_word = ""
+                words.append(character)
+        if current_word:
+            words.append(current_word)
+        for word in words:
+            text= text + word
             p.write(text)
             time.sleep(0.02)
-        text = text + "\n"
-
-
-
-paragraphs = report.split("\n\n")  # Split text into paragraphs
-text = ""
-for paragraph in paragraphs:
-    words = []
-    current_word = ""
-    for character in paragraph:
-        if character.isalnum() or character == "'":  # Preserve alphanumeric characters and apostrophes
-            current_word += character
-        else:
-            if current_word:
-                words.append(current_word)
-                current_word = ""
-            words.append(character)
-    if current_word:
-        words.append(current_word)
-    for word in words:
-        text= text + word
-        p.write(text)
-        time.sleep(0.02)
 
 st.caption('Autor: Ken Takahashi, \n 2023')
 
