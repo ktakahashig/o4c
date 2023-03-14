@@ -48,6 +48,7 @@ if query != '':
             text= text + word
             p.write(text)
             time.sleep(0.02)
+        text = text + "\n\n"
 
 st.caption('Autor: Ken Takahashi, \n 2023')
 
