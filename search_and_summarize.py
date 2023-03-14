@@ -27,3 +27,5 @@ if query != '':
     st.write(report)
 
 
+st.write('Ken Takahashi, 2023')
+st.write('Instituto Geofísico del Perú')
