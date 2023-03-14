@@ -34,7 +34,7 @@ if query != '':
     # Split each sentence into words using regular expressions
     words = [re.findall(r'\w+|[^\w\s]', sentence) for sentence in sentences]
     text = ""
-    for sentence in words
+    for sentence in words:
         for word in sentence:
             text= text + word + " "
             p.write(text)
