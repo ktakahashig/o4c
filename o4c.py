@@ -129,7 +129,7 @@ def do_summary(results,query):
     report = report+"\n\nReferencias:\n\n"+bibliografia
     return report
 
-def search_n_summarize(interpretaciones,query,min_similarity = 0.75,max_results = 10):
+def search_n_summarize(interpretaciones,query,min_similarity = 0.8,max_results = 10):
     results = do_search(interpretaciones,query,min_similarity,max_results)
     if len(results)>0:
         report = do_summary(results,query)
