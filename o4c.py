@@ -108,6 +108,7 @@ def do_summary(results,query):
         similares en párrafos, sobre todo los resultados de la mismas referencias, y debes hacer 
         la citación de cada una de las referencias indicadas en la forma "nombres (año)" o 
         "(nombres, año)". En caso de contarse con una sola referencia, hacer un breve resumen.
+        No incluyas ninguna referencia que no esté indicada a continuación.
     Referencia :: Resultados
     <Referencias>
     
