@@ -78,7 +78,7 @@ def semantic_search(df, query):
 # Hacer la búsqueda semántica y obtener la similaridad coseno
 def do_search(interpretaciones,query,min_similarity,max_results):
     results = semantic_search(interpretaciones, query).sort_values('similarity', ascending=False)
-    results = results[results.similarity>=min_similarity][:max_results]
+    results = results[results.similarity>min_similarity][:max_results]
     return results
 
 # Hacer el reporte basado en las interpretaciones más cercanas a la consulta
