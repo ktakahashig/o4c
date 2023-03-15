@@ -16,13 +16,12 @@ interpretaciones['embeddings']=interpretaciones.embeddings.apply(
 
 st.title('ClimaCiencia')
 st.caption('Observatorio del Conocimiento Científico sobre Cambio Climático O4C, Instituto Geofísico del Perú')
-#st.caption('Instituto Geofísico del Perú')
 
 st.header('Reporte de interpretaciones con IA')
 st.write('Ingrese abajo su consulta para buscar entre las interpretaciones disponibles en el Observatorio del Conocimiento Científico sobre Cambio Climático O4C y generar un reporte automatizado con inteligencia artificial.')
 
 query = st.text_input("Busque en el O4C (presione Enter al finalizar):" )
-#st.write('Presione Enter al finalizar y espere mientras se genera el reporte.')
+st.caption('Presione Enter (o a la derecha de la barra en dispositivos móviles) al finalizar y espere')
 
 if query != '':
     with st.spinner('Espere mientras la IA genera el reporte ...'):
@@ -50,5 +49,5 @@ if query != '':
             time.sleep(0.02)
         text = text + "\n\n"
 
-st.caption('Autor: Ken Takahashi, \n 2023')
+st.caption('© Ken Takahashi Guevara, 2023')
 
