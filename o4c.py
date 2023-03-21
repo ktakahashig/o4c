@@ -106,7 +106,7 @@ def do_summary(results,query):
         en la forma Referencia :: Resultados. Debes citar todas las referencias.
         El texto que escribas debe tener la forma de un reporte técnico en español, agrupando los resultados 
         similares en párrafos, sobre todo los resultados de la mismas referencias, y debes hacer 
-        la citación de cada una de las referencias indicadas en la forma "nombres (año)" o 
+        la citación de cada una de las referencias que tenga relación con el tema "<Tema>"  en la forma "nombres (año)" o 
         "(nombres, año)". En caso de contarse con una sola referencia, hacer un breve resumen.
         No incluyas ninguna referencia que no esté indicada a continuación.
     Referencia :: Resultados
