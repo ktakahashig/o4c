@@ -113,7 +113,8 @@ def do_summary(results,query):
     <Referencias>
     
     Debes citar todas las referencias y el texto debe tener la forma de un reporte técnico en español, 
-    agrupando los resultados similares en párrafos.
+    agrupando los resultados similares en párrafos. Si no hay referencias relevantes al tema "<Tema>", no hagas el reporte e indica 
+        "Lo sentimos. No contamos con información suficientemente relevante."
     """
     message_assist = """
     Reporte técnico sobre <Tema>:
