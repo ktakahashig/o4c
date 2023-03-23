@@ -103,7 +103,7 @@ def do_summary(results,query):
     message_user = """
         Haz una síntesis del conocimiento científico sobre el tema "<Tema>" contenido en los 
         siguientes resultados de investigaciones científicas, los cuales son proporcionados 
-        en la forma Referencia :: Resultados. Debes citar todas las referencias.
+        en la forma Referencia :: Resultados. Debes citar todas las referencias relevantes al tema "<Tema>".
         El texto que escribas debe tener la forma de un reporte técnico en español, agrupando los resultados 
         similares en párrafos, sobre todo los resultados de la mismas referencias, y debes hacer 
         la citación de cada una de las referencias que tenga relación con el tema "<Tema>"  en la forma "nombres (año)" o 
