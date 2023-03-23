@@ -14,13 +14,13 @@ interpretaciones = pd.read_csv(interpretaciones_resumidas)
 interpretaciones['embeddings']=interpretaciones.embeddings.apply(
     lambda s: list(ast.literal_eval(s)))
 
-st.title('ClimaCiencia')
-st.caption('Observatorio del Conocimiento Científico sobre Cambio Climático O4C, Instituto Geofísico del Perú')
+st.title('CienciaClimática')
+st.caption('Observatorio del Conocimiento Científico sobre Cambio Climático, Instituto Geofísico del Perú')
 
-st.header('Reporte de interpretaciones con IA')
+st.header('Reporte de interpretaciones con IA (demo)')
 st.write('Ingrese abajo su consulta para buscar entre las interpretaciones disponibles en el Observatorio del Conocimiento Científico sobre Cambio Climático O4C y generar un reporte automatizado con inteligencia artificial.')
 
-query = st.text_input("Busque en el O4C:" )
+query = st.text_input("Busque en el Observatorio:" )
 st.caption('Presione Enter (o a la derecha de la barra en dispositivos móviles) al finalizar y espere')
 
 if query != '':
