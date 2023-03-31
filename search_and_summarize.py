@@ -1,4 +1,4 @@
-
+"""
 #### For azure
 import streamlit as st
 from gunicorn.app.base import BaseApplication
@@ -35,6 +35,7 @@ def run_streamlit_app(app, port=5000):
 if __name__ == '__main__':
     run_streamlit_app(app)
 ####
+"""
 
 def my_app():
     import streamlit as st
@@ -89,4 +90,4 @@ def my_app():
             text = text + "\n\n"
 
     st.caption('© Ken Takahashi Guevara, 2023')
-
+my_app()
