@@ -80,12 +80,116 @@ def do_summary(results,query):
     report = report+"\n\nReferencias:\n\n"+bibliografia
     return report
 
-def search_n_summarize(interpretaciones,query,min_similarity = 0.77,max_results = 10):
+def do_summary_lim(results,query):
+    import openai
+    # Preparar lista de Referencias :: Resultados y conclusiones para el prompt
+    dum=results[['Referencia','Limitaciones']].drop_duplicates()
+    lista_resultados = ''
+    for index, row in dum.iterrows():
+        lista_resultados += ' :: '.join(row.astype(str)) + '\n'    
+    # Preparar lista de referencias para añadir al reporte
+    dum=results[['Referencia','DOI','Intérprete','Similaridad']]
+    dum=dum.sort_values(by=['Referencia']).drop_duplicates()
+    bibliografia = ''
+    for index, row in dum.iterrows():
+        bibliografia += row[0].strip()+': https://doi.org/'+row[1].strip()+ " (intérp.: " \
+                     + row[2].strip()+'; sim. = '+"{:4.2f}".format(row[3]).strip()+')\n\n'   
+    message_sys = """
+        Eres un científico experto en el clima y estás apoyando a autoridades en el Perú para 
+        elaborar los planes de gestión del cambio climático.
+        """
+    message_user = """
+        Haz una síntesis de las limitaciones de los estudios sobre el tema "<Tema>" contenido en los 
+        siguientes resultados de investigaciones científicas, los cuales son proporcionados 
+        en la forma Referencia :: Limitaciones. Debes citar todas las referencias relevantes al tema "<Tema>".
+        El texto que escribas debe tener la forma de un reporte técnico en español, agrupando los resultados 
+        similares en párrafos, sobre todo los resultados de la mismas referencias, y debes hacer 
+        la citación de cada una de las referencias que tenga relación con el tema "<Tema>"  en la forma "nombres (año)" o 
+        "(nombres, año)". En caso de contarse con una sola referencia, hacer un breve resumen.
+        No incluyas ninguna referencia que no esté indicada a continuación.
+    Referencia :: Limitaciones
+    <Referencias>
+    
+    Debes citar todas las referencias y el texto debe tener la forma de un reporte técnico en español, 
+    agrupando los resultados similares en párrafos. 
+    """
+    message_assist = """
+    Reporte técnico sobre <Tema>:
+    """
+    message_user = message_user.replace("<Tema>", query)
+    message_user = message_user.replace("<Referencias>", lista_resultados)
+    message_assist = message_assist.replace("<Tema>", query)
+    messages = [{"role": "system", "content": message_sys},{"role": "user", "content": message_user},
+                {"role": "assistant", "content": message_assist}]
+    # Correr el modelo y obtener el reporte
+    response = openai.ChatCompletion.create(model='gpt-3.5-turbo', messages=messages, max_tokens=1800, 
+                                            n=1, stop=None, temperature=0.1,top_p=0.3)
+    report = response['choices'][0]['message']['content'].strip()
+    report = report+"\n\nReferencias:\n\n"+bibliografia
+    return report
+
+def do_summary_plan(results,query):
+    import openai
+    # Preparar lista de Referencias :: Resultados y conclusiones para el prompt
+    dum=results[['Referencia','Limitaciones']].drop_duplicates()
+    lista_resultados = ''
+    for index, row in dum.iterrows():
+        lista_resultados += ' :: '.join(row.astype(str)) + '\n'    
+    # Preparar lista de referencias para añadir al reporte
+    dum=results[['Referencia','DOI','Intérprete','Similaridad']]
+    dum=dum.sort_values(by=['Referencia']).drop_duplicates()
+    bibliografia = ''
+    for index, row in dum.iterrows():
+        bibliografia += row[0].strip()+': https://doi.org/'+row[1].strip()+ " (intérp.: " \
+                     + row[2].strip()+'; sim. = '+"{:4.2f}".format(row[3]).strip()+')\n\n'   
+    message_sys = """
+        Eres un científico experto en el clima y estás apoyando a autoridades en el Perú para 
+        elaborar los planes de gestión del cambio climático.
+        """
+    message_user = """
+        Haz una propuesta de plan de investigación científica sobre la base de las limitaciones identificadas
+        de los estudios sobre el tema "<Tema>" contenido en los 
+        siguientes resultados de investigaciones científicas, los cuales son proporcionados 
+        en la forma Referencia :: Limitaciones. 
+        El texto que escribas debe ser en español e incluir acciones concretas organizadas según componentes de un programa.
+        la citación de cada una de las referencias que tenga relación con el tema "<Tema>"  en la forma "nombres (año)" o 
+        "(nombres, año)". 
+
+    Referencia :: Limitaciones
+    <Referencias>
+
+    El texto que escribas debe ser en español e incluir acciones concretas organizadas según componentes de un programa, 
+    citando las referencias relevantes pero sin incluir una sección de bibliografía o referencias.
+
+    
+    """
+    message_assist = """
+    Plan de investigación sobre <Tema>:
+    """
+    message_user = message_user.replace("<Tema>", query)
+    message_user = message_user.replace("<Referencias>", lista_resultados)
+    message_assist = message_assist.replace("<Tema>", query)
+    messages = [{"role": "system", "content": message_sys},{"role": "user", "content": message_user},
+                {"role": "assistant", "content": message_assist}]
+    # Correr el modelo y obtener el reporte
+    response = openai.ChatCompletion.create(model='gpt-3.5-turbo', messages=messages, max_tokens=1800, 
+                                            n=1, stop=None, temperature=0.1,top_p=0.3)
+    report = response['choices'][0]['message']['content'].strip()
+    report = report+"\n\nReferencias:\n\n"+bibliografia
+    return report
+
+
+def search_n_summarize(interpretaciones,query,modo,min_similarity = 0.77,max_results = 10):
     results = do_search(interpretaciones,query,min_similarity,max_results)
     if len(results)>0:
-        report = do_summary(results,query)
+        if modo == 0: # Resumir resultados y conclusiones
+           report = do_summary(results,query)
+        elif modo == 1:
+           report = do_summary_lim(results,query)
+        else:
+           report = do_summary_plan(results,query)
     else:
         report = "Lo sentimos. No contamos con información suficientemente relevante."
-    #print(report)
+
     return report
 

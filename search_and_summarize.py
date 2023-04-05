@@ -20,14 +20,29 @@ def my_app():
     st.header('Reporte de interpretaciones con IA (demo)')
     st.write('Ingrese abajo su consulta para buscar entre las interpretaciones disponibles en el Observatorio del Conocimiento Científico sobre Cambio Climático O4C y generar un reporte automatizado con inteligencia artificial.')
 
+    opciones=['Resultados y Conclusiones','Limitaciones de los estudios','Plan de investigación']
+    opcion=st.radio("Elija sobre qué desea reportar:", options=opciones)
+
     query = st.text_input("Busque en el Observatorio:" )
 
     st.caption('Presione Enter (o a la derecha de la barra en dispositivos móviles) al finalizar y espere')
 
+
+
     if query != '':
-        with st.spinner('Espere mientras la IA genera el reporte ...'):
-            report=o4c.search_n_summarize(index,query)
-        st.success("Reporte generado con IA basado en interpretaciones más relevantes a: "+query+"\n\nIMPORTANTE: El usuario es responsable de verificar que este reporte refleje fielmente el contenido de las interpretaciones.\n\n")
+        if opcion == opciones[0]:
+            with st.spinner('Espere mientras la IA genera el reporte ...'):
+               report=o4c.search_n_summarize(index,query,modo=0)
+            st.success("Reporte generado con IA basado en interpretaciones de los resultados más relevantes a: "+query+"\n\nIMPORTANTE: El usuario es responsable de verificar que este reporte refleje fielmente el contenido de las interpretaciones.\n\n")
+        elif opcion == opciones[1]:
+            with st.spinner('Espere mientras la IA genera el reporte ...'):
+               report=o4c.search_n_summarize(index,query,modo=1)
+            st.success("Reporte generado con IA basado en interpretaciones de las limitaciones de los estudios más relevantes a: "+query+"\n\nIMPORTANTE: El usuario es responsable de verificar que este reporte refleje fielmente el contenido de las interpretaciones.\n\n")
+        else: 
+            with st.spinner('Espere mientras la IA genera el reporte ...'):
+               report=o4c.search_n_summarize(index,query,modo=2)
+            st.success("Propuesta de plan de investigación generado con IA basado en interpretaciones de las limitaciones de los estudios más relevantes a: "+query+"\n\n")
+
         p = st.empty()
         paragraphs = report.split("\n\n")  # Split text into paragraphs
         text = ""
