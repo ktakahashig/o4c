@@ -1,84 +1,34 @@
-def leer_interpretaciones(archivo="Interpretaciones O4C (Respuestas) - Respuestas de formulario 1.csv"):
+
+def semantic_search(index, query,top_k=10):
     import pandas as pd
-    import warnings
-    warnings.filterwarnings("ignore")
-    interpretaciones = pd.read_csv(archivo)
-    interpretaciones['Marca temporal']=pd.to_datetime(interpretaciones['Marca temporal'],
-                                                      format="%d/%m/%Y %H:%M:%S")
-    interpretaciones['Apellidos, Nombres']=[interpretaciones['Apellidos de intérprete'][i].strip() + ", " + 
-                                            interpretaciones['Nombres de intérprete'][i].strip()
-                                             for i in range(len(interpretaciones))]
-    interpretaciones['Apellidos, Nombres']=interpretaciones['Apellidos, Nombres'].str.title()
-    interpretaciones = interpretaciones.rename(columns={interpretaciones.columns[4]: 'DOI', 
-                                                        interpretaciones.columns[5]: 'Título',
-                                                        interpretaciones.columns[6]: 'Resultados', 
-                                                        interpretaciones.columns[7]: 'Metodología',
-                                                        interpretaciones.columns[8]: 'Limitaciones', 
-                                                        interpretaciones.columns[9]: 'Palabras clave',
-                                                        interpretaciones.columns[12]: 'Ámbito geográfico', 
-                                                        interpretaciones.columns[13]: 'Escala'})
-    interpretaciones = interpretaciones.drop(interpretaciones.columns[15:22], axis=1)
-    interpretaciones['Adaptación'] = interpretaciones['Adaptación'].str.replace(r'\([^)]*\)', '')
-    interpretaciones['Mitigación'] = interpretaciones['Mitigación'].str.replace(r'\([^)]*\)', '')
-    #
-    # Limpiar la base de datos
-    interpretaciones['Apellidos, Nombres'] = interpretaciones['Apellidos, Nombres'].replace(
-        'Silva Vidal, Yamina','Silva Vidal, Fey Yamina')
-    interpretaciones['Apellidos, Nombres'] = interpretaciones['Apellidos, Nombres'].replace(
-        'Flores Rojas, José','Flores Rojas, José Luis')
-    interpretaciones['Apellidos, Nombres'] = interpretaciones['Apellidos, Nombres'].replace(
-        'Martínez, Alejandra G.','Martinez Grimaldo, Alejandra G.')
-    interpretaciones['Apellidos, Nombres'] = interpretaciones['Apellidos, Nombres'].replace(
-        'Díaz Llatas, Dianadiazll','Díaz Llatas, Diana')
-    interpretaciones['Apellidos, Nombres'] = interpretaciones['Apellidos, Nombres'].replace(
-        'Mosquera Váquez, Kobi Alberto','Mosquera Vásquez, Kobi Alberto')
-    interpretaciones['DOI'] = interpretaciones['DOI'].str.replace('DOI: ','', regex=True)
-    interpretaciones['DOI'] = interpretaciones['DOI'].str.replace('DOI','', regex=True)
-    interpretaciones['DOI'] = interpretaciones['DOI'].str.replace('doi:','', regex=True)
-    interpretaciones['DOI'] = interpretaciones['DOI'].str.replace('doi','', regex=True)
-    interpretaciones['DOI'] = interpretaciones['DOI'].str.replace('/full','', regex=True)
-    # Esto no funciona muy bien
-    interpretaciones['DOI'] = interpretaciones['DOI'].apply(lambda x: "/".join(x.split('/')[-2:]).strip())
-    # porque falla aquí
-    interpretaciones.DOI[interpretaciones.DOI == '2515-7620/ab9003'] = '10.1088/2515-7620/ab9003'
-    interpretaciones.DOI[interpretaciones.DOI == '1748-9326/ac0e65'] = '10.1088/1748-9326/ac0e65'
-    interpretaciones.DOI[interpretaciones.DOI == '1748-9326/aa7541'] = '10.1088/1748-9326/aa7541'
-    interpretaciones.DOI[interpretaciones.DOI == 'articles/s41467-020-18241-x'] = \
-            '10.1038/s41467-020-18241-x'
-    interpretaciones.DOI[interpretaciones.DOI == "Landscape and Urban Planning"] = \
-            "10.1016/j.landurbplan.2016.03.021"
-    interpretaciones['DOI'] = interpretaciones['DOI'].str.replace(' ','', regex=True)
-    # Caso de DOI y titulo invertidos
-    i =interpretaciones.DOI.str.contains('Hydro')
-    doi = interpretaciones["Título"][i]
-    titulo = interpretaciones["DOI"][i]
-    interpretaciones["Título"][i]=titulo
-    interpretaciones["DOI"][i]=doi
-    #interpretes = pd.read_csv("interpretes.csv")
-    #interpretaciones = interpretaciones.join(interpretes.set_index('Apellidos, Nombres'), 
-    #                                         on='Apellidos, Nombres')
-    return interpretaciones
-
-# Para búsqueda semántica
-def get_embed_interpretaciones(df):
     from openai.embeddings_utils import get_embedding
-    df['Combinado']=df[["Título", "Resultados", "Metodología", "Limitaciones",\
-                        "Palabras clave",'Adaptación', 'Mitigación', \
-                        'Ámbito geográfico',  'Escala']].apply(lambda x: ' '.join(x.astype(str)), axis=1)
-    df['embeddings'] = [get_embedding(x,engine="text-embedding-ada-002") for x in df.Combinado]
-    df.to_csv('interpretaciones_embeddings.csv')
-    return df
-
-def semantic_search(df, query):
-    from openai.embeddings_utils import get_embedding,cosine_similarity
     query_embedding = get_embedding(query, engine="text-embedding-ada-002")
-    df["similarity"] = df.embeddings.apply(lambda x: cosine_similarity(x, query_embedding))
+    query_result = index.query(query_embedding, namespace='combined',top_k=top_k)
+    matches=query_result.matches
+    ids = [res.id for res in matches]
+    scores = [res.score for res in matches]
+    results=index.fetch(ids,namespace='combined')
+
+    columns=['Id','DOI','Referencia','Año','Título','Resultados','Resultados cortos','Metodología',
+             'Limitaciones','Palabras clave','Adaptación','Mitigación','Ámbito geográfico','Escala',
+             'Intérprete','Revisor']
+    df = pd.DataFrame(columns=columns)
+
+    for id in ids:
+        row=[id]
+        for col in columns[1:]:
+            row.append(results.vectors[id].metadata[col])
+        df.loc[len(df)] = row
+    df['Similaridad']=scores
+    df['Similaridad']=df['Similaridad'].astype(float)
+    df['Año'] = df['Año'].astype(int)
+
     return df
 
 # Hacer la búsqueda semántica y obtener la similaridad coseno
-def do_search(interpretaciones,query,min_similarity,max_results):
-    results = semantic_search(interpretaciones, query).sort_values('similarity', ascending=False)
-    results = results[results.similarity>min_similarity][:max_results]
+def do_search(index,query,min_similarity,max_results=10):
+    results = semantic_search(index, query,max_results).sort_values('Similaridad', ascending=False)
+    results = results[results.Similaridad>min_similarity][:max_results]
     return results
 
 # Hacer el reporte basado en las interpretaciones más cercanas a la consulta
@@ -90,7 +40,7 @@ def do_summary(results,query):
     for index, row in dum.iterrows():
         lista_resultados += ' :: '.join(row.astype(str)) + '\n'    
     # Preparar lista de referencias para añadir al reporte
-    dum=results[['Referencia','DOI','Apellidos, Nombres','similarity']]
+    dum=results[['Referencia','DOI','Intérprete','Similaridad']]
     dum=dum.sort_values(by=['Referencia']).drop_duplicates()
     bibliografia = ''
     for index, row in dum.iterrows():
@@ -125,7 +75,7 @@ def do_summary(results,query):
                 {"role": "assistant", "content": message_assist}]
     # Correr el modelo y obtener el reporte
     response = openai.ChatCompletion.create(model='gpt-3.5-turbo', messages=messages, max_tokens=1800, 
-                                            n=1, stop=None, temperature=0.2)
+                                            n=1, stop=None, temperature=0.1,top_p=0.3)
     report = response['choices'][0]['message']['content'].strip()
     report = report+"\n\nReferencias:\n\n"+bibliografia
     return report
@@ -139,12 +89,3 @@ def search_n_summarize(interpretaciones,query,min_similarity = 0.77,max_results 
     #print(report)
     return report
 
-def slow_print_words(text, delay=0.02):
-    import time
-    text =text.replace('\n','_newline_ ')
-    words = text.split()
-    for word in words:
-        word=word.replace('_newline_','\n')
-        print(word, end=' ', flush=True)
-        time.sleep(delay)
-    print()
