@@ -41,7 +41,7 @@ def my_app():
         else: 
             with st.spinner('Espere mientras la IA genera el reporte ...'):
                report=o4c.search_n_summarize(index,query,modo=2)
-            st.success("Propuesta de plan de investigación generado con IA basado en interpretaciones de las limitaciones de los estudios más relevantes a: "+query+"\n\n")
+            st.success("Propuesta de plan de investigación generado con IA basado en interpretaciones de las limitaciones de los estudios más relevantes a: "+query+"\n\nIMPORTANTE: El usuario es responsable de verificar que este plan cita adecuadamente las investigaciones, considerando que la IA puede dar aportes propios sin mayor sustento.\n\n")
 
         p = st.empty()
         paragraphs = report.split("\n\n")  # Split text into paragraphs
