@@ -2,6 +2,6 @@ openai==0.27.0
 pandas==1.4.1
 plotly==5.13.1
 scipy==1.10.1
-sklearn==1.2.2
+sklearn==0.0
 matplotlib==3.7.1
 pinecone==2.2.1
