@@ -20,7 +20,7 @@ def my_app():
     st.header('Reporte de interpretaciones con IA (demo)')
     st.write('Ingrese abajo su consulta para buscar entre las interpretaciones disponibles en el Observatorio del Conocimiento Científico sobre Cambio Climático O4C y generar un reporte automatizado con inteligencia artificial.')
 
-    opciones=['Resultados y Conclusiones','Limitaciones de los estudios','Plan de investigación']
+    opciones=['Resultados y Conclusiones','Limitaciones de los estudios']#,'Plan de investigación']
     opcion=st.radio("Elija sobre qué desea reportar:", options=opciones)
 
     query = st.text_input("Busque en el Observatorio:" )
