@@ -11,7 +11,7 @@ def my_app():
 
     openai.api_key  = st.secrets["OPENAI_API_KEY"]
     pinecone.init(api_key=st.secrets["PINECONE_API_KEY"],environment='us-central1-gcp')
-    index_name = "o4c"
+    index_name = "o4c-index"
     index = pinecone.Index(index_name=index_name)
 
     st.title('CienciaClimática')
